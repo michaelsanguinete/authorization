@@ -1,5 +1,6 @@
 package br.com.caju.authorization.controller;
 
+import br.com.caju.authorization.dto.TransactionApproved;
 import br.com.caju.authorization.dto.TransactionRequest;
 import br.com.caju.authorization.dto.TransactionResponse;
 import br.com.caju.authorization.entity.Transaction;
@@ -20,12 +21,17 @@ public class TransactionController {
 
     @PostMapping
     public ResponseEntity realizaTransacao(@RequestBody TransactionRequest request){
-        service.realizaTransacao(request);
-        return new ResponseEntity(HttpStatus.CREATED);
+        TransactionApproved transactionApproved = service.realizaTransacao(request);
+        return new ResponseEntity<>(transactionApproved, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{merchant}")
+    @GetMapping("/merchant/{merchant}")
     public ResponseEntity<List<TransactionResponse>> findByMerchant (@PathVariable String merchant){
         return ResponseEntity.ok(service.findByMerchant(merchant));
+    }
+
+    @GetMapping("/accountId/{accountId}")
+    public ResponseEntity<List<TransactionResponse>> findByAccountId(@PathVariable Long accountId){
+        return ResponseEntity.ok(service.findByAccountId(accountId));
     }
 }
