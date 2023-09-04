@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,16 +30,16 @@ public class TransactionService {
 
     public List<TransactionResponse> findByMerchant(String merchant) {
         List<Transaction> transactions = repository.findByMerchant(merchant);
-        List<TransactionResponse> responses = new ArrayList<>();
-        transactions.forEach(de -> responses.add(new TransactionResponse(de)));
-        return responses;
+        return transactions.stream()
+                .map(TransactionResponse::new)
+                .collect(Collectors.toList());
     }
 
-    public List<TransactionResponse> findByAccountId(Long accountId){
+    public List<TransactionResponse> findByAccountId(Long accountId) {
         List<Transaction> transactions = repository.findByAccountId(accountId);
-        List<TransactionResponse> responses = new ArrayList<>();
-        transactions.forEach(de -> responses.add(new TransactionResponse(de)));
-        return responses;
+        return transactions.stream()
+                .map(TransactionResponse::new)
+                .collect(Collectors.toList());
     }
 
     public TransactionApproved realizaTransacao(TransactionRequest request) {
@@ -47,13 +47,7 @@ public class TransactionService {
         Account account = accountRepository.getReferenceById(request.getAccountId());
 
         //Verifica se a transação já não foi feita no mesmo estabelecimento, com o mesmo valor e o mesmo mcc no tempo definido
-        if (checkDuplicateTransaction(request.getAccountId(), request.getMerchant(), amount, 60)) {
-            Transaction transaction = mapper.map(request, Transaction.class);
-            transaction.setRejectionCause("Transação duplicada!");
-            transaction.setResult(ResultEnum.REJEITADA);
-            transaction.setId(null);
-            repository.save(transaction);
-
+        if (checkDuplicateTransaction(request)) {
             return new TransactionApproved(ResultEnum.REJEITADA, "Transação já realizada, verifique o seu extrato ou aguarde alguns instantes e tente novamente");
         }
 
@@ -61,10 +55,11 @@ public class TransactionService {
         BigDecimal balance = defineTipoSaldo(request.getMcc(), account);
 
         //Verifica se existe saldo e aprova ou rejeita a transação
-        ResultEnum result = verificaSaldo(amount, balance) ? ResultEnum.APROVADA : ResultEnum.REJEITADA;
-        String rejectionCause = verificaSaldo(amount, balance) ? null : "Saldo insuficiente!";
+        boolean isApproved = verificaSaldo(amount, balance);
+        ResultEnum result = isApproved ? ResultEnum.APROVADA : ResultEnum.REJEITADA;
+        String rejectionCause = isApproved ? null : "Saldo insuficiente!";
 
-        atualizaSaldo(account, request.getMcc(), amount, verificaSaldo(amount, balance));
+        atualizaSaldo(account, request.getMcc(), amount, isApproved);
 
         Transaction transaction = mapper.map(request, Transaction.class);
         transaction.setRejectionCause(rejectionCause);
@@ -96,12 +91,18 @@ public class TransactionService {
         }
     }
 
-    private boolean checkDuplicateTransaction(Long accountId, String merchant, BigDecimal amount, int seconds) {
+    private boolean checkDuplicateTransaction(TransactionRequest request) {
         LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime startTime = currentTime.minusSeconds(seconds);
-
-        List<Transaction> similarTransactions = repository.findByAccountIdAndMerchantAndAmountAndPurchaseDateBetween(accountId, merchant, amount, startTime, currentTime);
-        return (!similarTransactions.isEmpty());
+        LocalDateTime startTime = currentTime.minusSeconds(60);
+        List<Transaction> similarTransactions = repository.findByAccountIdAndMerchantAndAmountAndMccAndPurchaseDateBetween(request.getAccountId(), request.getMerchant(), request.getAmount(), request.getMcc(), startTime, currentTime);
+        if (!similarTransactions.isEmpty()) {
+            Transaction transaction = mapper.map(request, Transaction.class);
+            transaction.setRejectionCause("Transação duplicada!");
+            transaction.setResult(ResultEnum.REJEITADA);
+            transaction.setId(null);
+            repository.save(transaction);
+            return true;
+        }
+        return false;
     }
-
 }
