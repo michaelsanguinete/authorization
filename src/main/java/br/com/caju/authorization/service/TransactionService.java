@@ -8,6 +8,8 @@ import br.com.caju.authorization.entity.Account;
 import br.com.caju.authorization.entity.Transaction;
 import br.com.caju.authorization.repository.AccountRepository;
 import br.com.caju.authorization.repository.TransactionRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,19 +31,21 @@ public class TransactionService {
 
     public List<TransactionResponse> findByMerchant(String merchant) {
         List<Transaction> transactions = repository.findByMerchant(merchant);
+        if(transactions.isEmpty()) throw new EntityNotFoundException();
         return transactions.stream()
                 .map(TransactionResponse::new)
                 .collect(Collectors.toList());
     }
 
-    public List<TransactionResponse> findByAccountId(Long accountId) {
+    public List<TransactionResponse>findByAccountId(Long accountId) {
         List<Transaction> transactions = repository.findByAccountId(accountId);
+        if(transactions.isEmpty()) throw new EntityNotFoundException();
         return transactions.stream()
                 .map(TransactionResponse::new)
                 .collect(Collectors.toList());
     }
 
-    public TransactionApproved realizaTransacao(TransactionRequest request) {
+    public TransactionApproved realizaTransacao(@Valid TransactionRequest request) {
         BigDecimal amount = request.getAmount();
         Account account = accountRepository.getReferenceById(request.getAccountId());
 

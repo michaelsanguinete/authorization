@@ -5,6 +5,7 @@ import br.com.caju.authorization.dto.TransactionRequest;
 import br.com.caju.authorization.dto.TransactionResponse;
 import br.com.caju.authorization.entity.Transaction;
 import br.com.caju.authorization.service.TransactionService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class TransactionController {
     private final TransactionService service;
 
     @PostMapping
-    public ResponseEntity realizaTransacao(@RequestBody TransactionRequest request){
+    public ResponseEntity realizaTransacao(@RequestBody @Valid TransactionRequest request){
         TransactionApproved transactionApproved = service.realizaTransacao(request);
         return new ResponseEntity<>(transactionApproved, HttpStatus.CREATED);
     }

@@ -14,6 +14,5 @@ public interface TransactionRepository extends JpaRepository<Transaction,Long> {
 
     List<Transaction> findByMerchant(String merchant);
     List<Transaction> findByAccountId(Long accountId);
-
     List<Transaction> findByAccountIdAndMerchantAndAmountAndMccAndPurchaseDateBetween(Long accountId, String merchant, BigDecimal amount, Integer mcc, LocalDateTime startTime, LocalDateTime endTime);
 }
