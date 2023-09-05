@@ -5,6 +5,7 @@ import br.com.caju.authorization.dto.TransactionRequest;
 import br.com.caju.authorization.dto.TransactionResponse;
 import br.com.caju.authorization.entity.Transaction;
 import br.com.caju.authorization.service.TransactionService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/transaction")
-@CrossOrigin("authorization-production.up.railway.app")
+@CrossOrigin(origins = "*")
 public class TransactionController {
 
     private final TransactionService service;
