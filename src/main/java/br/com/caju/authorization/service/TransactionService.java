@@ -11,6 +11,7 @@ import br.com.caju.authorization.repository.TransactionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class TransactionService {
 
@@ -73,11 +74,11 @@ public class TransactionService {
         return new TransactionApproved(result, rejectionCause);
     }
 
-    private boolean verificaSaldo(BigDecimal amount, BigDecimal balance) {
+    public boolean verificaSaldo(BigDecimal amount, BigDecimal balance) {
         return balance.compareTo(amount) >= 0;
     }
 
-    private BigDecimal defineTipoSaldo(Integer mcc, Account account) {
+    public BigDecimal defineTipoSaldo(Integer mcc, Account account) {
         return switch (mcc) {
             case 5411, 5412 -> account.getFoodBalance();
             case 5811, 5812 -> account.getMealBalance();
@@ -85,7 +86,7 @@ public class TransactionService {
         };
     }
 
-    private void atualizaSaldo(Account account, Integer mcc, BigDecimal amount, boolean isApproved) {
+    public void atualizaSaldo(Account account, Integer mcc, BigDecimal amount, boolean isApproved) {
         BigDecimal newBalance = isApproved ? defineTipoSaldo(mcc, account).subtract(amount) : defineTipoSaldo(mcc, account);
         switch (mcc) {
             case 5411, 5412 -> account.setFoodBalance(newBalance);
@@ -94,7 +95,7 @@ public class TransactionService {
         }
     }
 
-    private boolean checkDuplicateTransaction(TransactionRequest request) {
+    public boolean checkDuplicateTransaction(TransactionRequest request) {
         LocalDateTime currentTime = LocalDateTime.now();
         LocalDateTime startTime = currentTime.minusSeconds(60);
         List<Transaction> similarTransactions = repository.findByAccountIdAndMerchantAndAmountAndMccAndPurchaseDateBetween(request.getAccountId(), request.getMerchant(), request.getAmount(), request.getMcc(), startTime, currentTime);

@@ -3,6 +3,7 @@ package br.com.caju.authorization.entity;
 import br.com.caju.authorization.dto.ResultEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@AllArgsConstructor
 public class Transaction {
 
     @Id
