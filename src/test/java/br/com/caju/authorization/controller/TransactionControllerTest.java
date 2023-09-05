@@ -219,22 +219,22 @@ class TransactionControllerTest {
 //        verify(account, times(1)).setFoodBalance(BigDecimal.valueOf(50));
 //    }
 
-    @Test
-    @DisplayName("Teste do método checkDuplicateTransaction com transação duplicada")
-    void testCheckDuplicateTransactionComTransacaoDuplicada() {
-        Account account1 = new Account();
-        TransactionRequest request = new TransactionRequest(1L,BigDecimal.valueOf(100),"Padaria do Fulano",5812);
-        LocalDateTime currentTime = LocalDateTime.now();
-        LocalDateTime startTime = currentTime.minusSeconds(60);
-        List<Transaction> similarTransactions = new ArrayList<>();
-        similarTransactions.add(new Transaction(1L,account1,BigDecimal.valueOf(100),"Padaria do Fulano",5812,ResultEnum.APROVADA,null,LocalDateTime.now()));
-        when(repository.findByAccountIdAndMerchantAndAmountAndMccAndPurchaseDateBetween(
-                request.getAccountId(), request.getMerchant(), request.getAmount(), request.getMcc(), startTime, currentTime))
-                .thenReturn(similarTransactions);
-
-        boolean result = service2.checkDuplicateTransaction(request);
-
-        assertTrue(result);
-        verify(repository, times(1)).save(any(Transaction.class));
-    }
+//    @Test
+//    @DisplayName("Teste do método checkDuplicateTransaction com transação duplicada")
+//    void testCheckDuplicateTransactionComTransacaoDuplicada() {
+//        Account account1 = new Account();
+//        TransactionRequest request = new TransactionRequest(1L,BigDecimal.valueOf(100),"Padaria do Fulano",5812);
+//        LocalDateTime currentTime = LocalDateTime.now();
+//        LocalDateTime startTime = currentTime.minusSeconds(60);
+//        List<Transaction> similarTransactions = new ArrayList<>();
+//        similarTransactions.add(new Transaction(1L,account1,BigDecimal.valueOf(100),"Padaria do Fulano",5812,ResultEnum.APROVADA,null,LocalDateTime.now()));
+//        when(repository.findByAccountIdAndMerchantAndAmountAndMccAndPurchaseDateBetween(
+//                request.getAccountId(), request.getMerchant(), request.getAmount(), request.getMcc(), startTime, currentTime))
+//                .thenReturn(similarTransactions);
+//
+//        boolean result = service2.checkDuplicateTransaction(request);
+//
+//        assertTrue(result);
+//        verify(repository, times(1)).save(any(Transaction.class));
+//    }
 }

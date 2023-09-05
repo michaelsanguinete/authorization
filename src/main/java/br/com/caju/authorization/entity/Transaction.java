@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-@AllArgsConstructor
 public class Transaction {
 
     @Id
