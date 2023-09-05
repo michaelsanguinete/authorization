@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/transaction")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://authorization-production.up.railway.app")
 public class TransactionController {
 
     private final TransactionService service;
