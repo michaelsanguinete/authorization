@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,16 +32,28 @@ public class TransactionService {
     private final AccountRepository accountRepository;
     private final ModelMapper mapper;
 
-    public List<TransactionResponse> findByMerchant(String merchant) {
-        List<Transaction> transactions = repository.findByMerchant(merchant);
+    public List<TransactionResponse> findByMerchantAndResult(String merchant, ResultEnum result) {
+        List<Transaction> transactions;
+        if (result == null) transactions = repository.findByMerchant(merchant);
+        else transactions = repository.findByMerchantAndResult(merchant, result);
         if(transactions.isEmpty()) throw new EntityNotFoundException();
         return transactions.stream()
                 .map(TransactionResponse::new)
                 .collect(Collectors.toList());
     }
 
-    public List<TransactionResponse>findByAccountId(Long accountId) {
-        List<Transaction> transactions = repository.findByAccountId(accountId);
+    public List<TransactionResponse>findByAccountIdAndResult(Long accountId, ResultEnum result) {
+        List<Transaction> transactions;
+        if (result == null) transactions = repository.findByAccountId(accountId);
+        else transactions = repository.findByAccountIdAndResult(accountId, result);
+        if(transactions.isEmpty()) throw new EntityNotFoundException();
+        return transactions.stream()
+                .map(TransactionResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<TransactionResponse>findByResult(ResultEnum result) {
+        List<Transaction> transactions = repository.findByResult(result);
         if(transactions.isEmpty()) throw new EntityNotFoundException();
         return transactions.stream()
                 .map(TransactionResponse::new)

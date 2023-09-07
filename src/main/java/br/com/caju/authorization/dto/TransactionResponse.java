@@ -3,6 +3,7 @@ package br.com.caju.authorization.dto;
 import br.com.caju.authorization.entity.Transaction;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionResponse {
 

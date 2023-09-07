@@ -25,6 +25,7 @@ public class Transaction {
     private BigDecimal amount;
     private String merchant;
     private Integer mcc;
+    @Enumerated
     private ResultEnum result;
     private String rejectionCause;
     private LocalDateTime purchaseDate = LocalDateTime.now();
