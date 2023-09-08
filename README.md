@@ -11,6 +11,7 @@ Projeto em **JAVA SpringBoot**, para simular autorizações de transações cart
 - **[SpringBoot 3.1.3](https://spring.io/projects/spring-boot)**
 - **[Banco MySQL](https://www.mysql.com/)**
 - **[OpenAPI/Swagger](https://springdoc.org/)**
+- **[Maven](https://maven.apache.org/)**
 
 <h2 align="center"> <a href="https://authorization-production.up.railway.app/swagger-ui/index.html" target="_blank">TESTAR API</a></h2>
 

@@ -4,7 +4,6 @@ import br.com.caju.authorization.dto.ResultEnum;
 import br.com.caju.authorization.dto.TransactionApproved;
 import br.com.caju.authorization.dto.TransactionRequest;
 import br.com.caju.authorization.dto.TransactionResponse;
-import br.com.caju.authorization.entity.Transaction;
 import br.com.caju.authorization.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.transaction.Transactional;

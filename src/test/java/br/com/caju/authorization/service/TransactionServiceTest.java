@@ -3,7 +3,6 @@ package br.com.caju.authorization.service;
 import br.com.caju.authorization.entity.Account;
 import br.com.caju.authorization.repository.AccountRepository;
 import br.com.caju.authorization.repository.TransactionRepository;
-import br.com.caju.authorization.service.TransactionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -41,7 +39,7 @@ public class TransactionServiceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         service = new TransactionService(repository, accountRepository, mapper);
     }
 

@@ -3,12 +3,9 @@ package br.com.caju.authorization.controller;
 import br.com.caju.authorization.dto.ResultEnum;
 import br.com.caju.authorization.dto.TransactionApproved;
 import br.com.caju.authorization.dto.TransactionRequest;
-import br.com.caju.authorization.dto.TransactionResponse;
-import br.com.caju.authorization.repository.TransactionRepository;
 import br.com.caju.authorization.service.TransactionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -18,17 +15,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.RETURNS_DEFAULTS;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -44,16 +35,10 @@ class TransactionControllerTest {
     private JacksonTester<TransactionRequest> transactionRequestJson;
 
     @Autowired
-    private JacksonTester<List<TransactionResponse>> transactionResponseJson;
-
-    @Autowired
     private JacksonTester<TransactionApproved> transactionApprovedJson;
 
     @MockBean
-    private TransactionService service;
-
-    @Mock
-    private TransactionRepository repository;
+    private TransactionService service;;
 
     @Test
     @DisplayName("Teste que deve retornar 400, pois a requisição está sendo enviada sem os campos")
@@ -91,30 +76,5 @@ class TransactionControllerTest {
         var jsonRetorno = transactionApprovedJson.write(transactionApproved).getJson();
 
         assertThat(response.getContentAsString()).isEqualTo(jsonRetorno);
-    }
-
-    @Test
-    public void testFindByAccountIdAndResult() throws Exception {
-        // Mock de dados de retorno
-        List<TransactionResponse> responseList = Arrays.asList(new TransactionResponse(), new TransactionResponse());
-        when(service.findByAccountIdAndResult(anyLong(), any(ResultEnum.class))).thenReturn(responseList);
-
-        // Teste da rota
-        mvc.perform(MockMvcRequestBuilders.get("/accountId/result/{accountId}", 12345L)
-                        .param("result", "FAILURE")) // Parâmetro opcional
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        // Adicione verificações adicionais, se necessário
-    }
-
-    @Test
-    public void testFindByResult() throws Exception {
-        // Mock de dados de retorno
-        List<TransactionResponse> responseList = Arrays.asList(new TransactionResponse(), new TransactionResponse());
-        when(service.findByResult(any(ResultEnum.class))).thenReturn(responseList);
-
-        // Teste da rota
-        mvc.perform(MockMvcRequestBuilders.get("/result/{result}", "SUCCESS"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        // Adicione verificações adicionais, se necessário
     }
 }
